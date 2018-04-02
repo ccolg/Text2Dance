@@ -15,7 +15,7 @@ joy_synonyms = ['Ecstatically', 'Gleefully', 'Joyfully', 'Triumphant']
 
 synonyms = {'fear': fear_synonyms, 'anger': anger_synonyms,
 			'confident': confident_synonyms, 'sadness': sadness_synonyms,
-			'joy': joy_synonyms, 'tentative': fear_synonyms, 'analytical': anger_synonyms}
+			'joy': joy_synonyms, 'tentative': ['Tentative'], 'analytical': anger_synonyms}
 body_parts = ['Head', 'Left Arm', 'Right Arm', 'Left Leg', 'Right Leg', 'Torso']
 directions =['Left', 'Right', 'Up', 'Down', 'Forward', 'Backward']
 
@@ -38,30 +38,44 @@ def text_dance():
 	# [document_tone:'...', sentences_tone:'...']
 	key_value_list = tone_json.items()
 
-	#create a list from key_value_list where each item is a sentence
-	#each sentence item also contains corresponding tones
-	sentence_list = key_value_list[1][1]
+	#check if sentence_tones exist -- if not, just use document-level tone.
+	if len(key_value_list) > 1:
+		#create a list from key_value_list where each item is a sentence
+		#each sentence item also contains corresponding tones
+		sentence_list = key_value_list[1][1]
 
-	#overall_tone_list = key_value_list[0][1]
-
-	#loop through sentences, extract the sentence id, tone id, and score
-	#store each tone and associated values in all_tones list (even if the sentence doesn't have a tone!)
-	for s in sentence_list:
-		inner_list = []
-		if s['tones'] != []:
-			tones = s['tones']
-			for i, item in enumerate(tones):
+		#loop through sentences, extract the sentence id, tone id, and score
+		#store each tone and associated values in all_tones list (even if the sentence doesn't have a tone!)
+		for s in sentence_list:
+			inner_list = []
+			if s['tones'] != []:
+				tones = s['tones']
+				for i, item in enumerate(tones):
+					inner_list.append(s['sentence_id'])
+					inner_list.append(tones[i]['tone_id'])
+					inner_list.append(tones[i]['score'])
+					all_tones.append(inner_list)
+					inner_list = []
+			else:
 				inner_list.append(s['sentence_id'])
-				inner_list.append(tones[i]['tone_id'])
-				inner_list.append(tones[i]['score'])
+				inner_list.append('')
+				inner_list.append('')
 				all_tones.append(inner_list)
+	else: #case where there is no sentence-level tone, only document-level tone
+		overall_list = key_value_list[0][1]['tones']
+		inner_list = []
+		if overall_list != []:
+			for t in overall_list:
 				inner_list = []
+				inner_list.append('doc_tone')
+				inner_list.append(t['tone_id'])
+				inner_list.append(t['score'])
+				all_tones.append(inner_list)
 		else:
-			inner_list.append(s['sentence_id'])
+			inner_list.append('doc_tone')
 			inner_list.append('')
 			inner_list.append('')
 			all_tones.append(inner_list)
-	
 	#TODO:
 		# Choose body parts and directions in a non-random way
 		# Possibly ignore sentences with a lower tone score?
@@ -75,9 +89,7 @@ def text_dance():
 			dance_move = random.choice(synonyms[tone_id]) + ' ' + random.choice(body_parts) + ' ' + random.choice(directions)
 		else:
 			dance_move = 'Just move around!'
-
 		print '%s: %s' % (i, dance_move)
-
 
 if __name__ == '__main__':
 	text_dance()
