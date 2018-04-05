@@ -2,8 +2,8 @@ import json, random
 from watson_developer_cloud import ToneAnalyzerV3
 
 tone_analyzer = ToneAnalyzerV3(
-	username='05ac6150-ffbd-403e-8105-c2b7a888bef4',
-	password='zFjoOUrEf0v5',
+	username='',
+	password='',
 	version='2017-09-26')
 
 # 'database' of movements
