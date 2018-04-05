@@ -2,27 +2,32 @@ import json, random
 from watson_developer_cloud import ToneAnalyzerV3
 
 tone_analyzer = ToneAnalyzerV3(
-	username='',
-	password='',
+	username='05ac6150-ffbd-403e-8105-c2b7a888bef4',
+	password='zFjoOUrEf0v5',
 	version='2017-09-26')
 
 # 'database' of movements
-fear_synonyms = ['Dreadfully', 'Uneasily', 'Nervously', 'Frightfully']
-anger_synonyms = ['Forceful', 'Powerful', 'Authoritative', 'Vigorous']
-confident_synonyms = ['Confidently', 'Calmly', 'Proudly']
-sadness_synonyms = ['Lugubrious', 'Sulk', 'Mope', 'Sullen', 'Brood']
-joy_synonyms = ['Ecstatically', 'Gleefully', 'Joyfully', 'Triumphant']
+fear_synonyms = ['hesitantly', 'uneasily', 'nervously', 'frightfully']
+anger_synonyms = ['forcefully!', 'powerfully!', 'authoritatively', 'vigorously']
+confident_synonyms = ['confidently!', 'calmly', 'proudly!', 'assertively!']
+sadness_synonyms = ['mournfully', 'sulkily', 'slowly', 'sullenly']
+joy_synonyms = ['ecstatically', 'gleefully', 'joyfully', 'triumphantly!']
 
 synonyms = {'fear': fear_synonyms, 'anger': anger_synonyms,
 			'confident': confident_synonyms, 'sadness': sadness_synonyms,
-			'joy': joy_synonyms, 'tentative': ['Tentative'], 'analytical': anger_synonyms}
-body_parts = ['Head', 'Left Arm', 'Right Arm', 'Left Leg', 'Right Leg', 'Torso']
-directions =['Left', 'Right', 'Up', 'Down', 'Forward', 'Backward']
+			'joy': joy_synonyms, 'tentative': ['nervously'], 'analytical': anger_synonyms}
+body_parts = ['head', 'left arm', 'right arm', 'left leg', 'right leg', 'torso', 'body']
+directions =['to the left', 'to the right', 'up', 'down', 'forward', 'backward']
+
+movements = ['Just move around!', 'Spin!', 'Fall!', 'Jump!', 'Grab a friend!', 'Shimmy!']
 
 
 def text_dance():
-	#Take user input and store in JSON format. 
-	user_input = raw_input('Welcome to Text2Dance!\nEnter some text: ')
+	#Take user input and store in JSON format.
+	print '\nWelcome to Text2Dance!'
+	print '\nAn interactive program that translates text to a list of dance movements.'
+	print 'Please type a minimum of 1 sentence and up to 100 sentences to see how your story can be formed into a dance!'
+	user_input = raw_input('\nEnter text: ')
 	data = {"text": user_input}
 
 	#Pass user's text in JSON format to Watson
@@ -79,21 +84,18 @@ def text_dance():
 	#TODO:
 		# Choose body parts and directions in a non-random way
 		# Possibly ignore sentences with a lower tone score?
-		# Currently, this prints "just move around" for a sentence with an empty tone. 
+		# Currently, this prints "just move around" for a sentence with an empty tone.
 		# We should either remove this or make it do something else
 
 	#print dance moves in original sentence order with randomized movements/directions/body parts
 	for i, tone in enumerate(all_tones):
 		tone_id = tone[1]
 		if tone_id:
-			dance_move = random.choice(synonyms[tone_id]) + ' ' + random.choice(body_parts) + ' ' + random.choice(directions)
+			dance_move = 'Move your ' + random.choice(body_parts) + ' ' + random.choice(directions) + ' ' + random.choice(synonyms[tone_id])
 		else:
-			dance_move = 'Just move around!'
-		print '%s: %s' % (i, dance_move)
+			dance_move = random.choice(movements)
+		print '\n%s: %s' %(i, dance_move)
+	print '\nThis is your story interpreted as a dance. Now, add a song and record your dance!\n'
 
 if __name__ == '__main__':
 	text_dance()
-
-
-
-
